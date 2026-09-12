@@ -1,0 +1,47 @@
+# {{PROJECT_NAME}} — single-service stack (rendered {{GENERATED_AT}})
+#
+#   docker compose build && docker compose up -d
+#
+# TLS is terminated by host nginx, never by this stack, so the published port is
+# bound to 127.0.0.1 only. See deploy/nginx.conf and deploy/https.md.
+#
+# IMAGE_TAG is injected by deploy/deploy.sh (from .deployed-tag); it defaults to
+# "latest" for local runs.
+
+name: "{{CONTAINER_NAME}}"
+
+services:
+  "{{CONTAINER_NAME}}":
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: "{{CONTAINER_NAME}}:${IMAGE_TAG:-latest}"
+    container_name: "{{CONTAINER_NAME}}"
+    restart: unless-stopped
+
+    env_file:
+      - .env
+    environment:
+      # Absolute path inside the container; the host-side value in .env is for
+      # local (non-Docker) development.
+      DATABASE_URL: sqlite:////app/data/app.db
+      # The host port is {{APP_PORT}} (nginx -> here); the process always listens
+      # on 8000 inside the container.
+      APP_PORT: "8000"
+
+    ports:
+      # Host loopback only. Never publish this on 0.0.0.0.
+      - "127.0.0.1:{{APP_PORT}}:8000"
+
+    volumes:
+      # SQLite data survives rebuilds and image rollbacks.
+      - ./data:/app/data
+
+    # The image ships a HEALTHCHECK hitting /healthz, so
+    # `docker compose up -d --wait` blocks until the app is actually serving.
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

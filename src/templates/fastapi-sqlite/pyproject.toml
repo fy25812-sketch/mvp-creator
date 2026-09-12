@@ -1,0 +1,48 @@
+# {{PROJECT_NAME}} — project metadata
+#
+# NOTE: this file is a template. It is rendered by the MVP Creator plugin, which
+# performs literal placeholder substitution only. Keep every dependency in sync
+# with requirements.txt.
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "{{PROJECT_SLUG}}"
+version = "0.1.0"
+description = "{{PROJECT_NAME}} — a FastAPI + SQLite MVP (rendered by MVP Creator on {{GENERATED_AT}})"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{ name = "{{PROJECT_NAME}} maintainers" }]
+
+# Mirrors the "runtime" block of requirements.txt.
+dependencies = [
+    "fastapi>=0.115,<1.0",
+    "uvicorn[standard]>=0.30,<1.0",
+    "SQLAlchemy>=2.0,<2.1",
+    "pydantic>=2.7,<3.0",
+    "pydantic-settings>=2.3,<3.0",
+    "Jinja2>=3.1,<4.0",
+    "python-multipart>=0.0.9,<1.0",
+]
+
+# Mirrors the "test" block of requirements.txt.
+[project.optional-dependencies]
+dev = [
+    "httpx>=0.27,<1.0",
+    "pytest>=8.0,<9.0",
+]
+
+[tool.setuptools]
+packages = ["app", "app.api"]
+
+[tool.setuptools.package-data]
+app = ["templates/*.html"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+filterwarnings = ["error::DeprecationWarning:app.*"]

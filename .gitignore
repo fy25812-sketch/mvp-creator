@@ -1,0 +1,8 @@
+# Test scratch space (temporary projects created by tests/ helpers).
+.tmp-tests/
+
+# Dependencies, if this package is ever installed alongside others.
+node_modules/
+
+# Plugin run state when this directory is itself the workspace.
+.mvp/

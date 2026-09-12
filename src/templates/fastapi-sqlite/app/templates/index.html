@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>{{APP_TITLE}}</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f5f6f8;
+      --panel: #ffffff;
+      --ink: #1b1f24;
+      --muted: #6b7280;
+      --line: #e3e6ea;
+      --accent: #2563eb;
+      --danger: #b91c1c;
+      --ok: #047857;
+      --radius: 10px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1115;
+        --panel: #171a21;
+        --ink: #e8eaed;
+        --muted: #9aa3af;
+        --line: #262b34;
+        --accent: #60a5fa;
+        --danger: #f87171;
+        --ok: #34d399;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 2rem 1rem 3rem;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    .wrap { max-width: 780px; margin: 0 auto; }
+    header h1 { margin: 0 0 .25rem; font-size: 1.9rem; letter-spacing: -.01em; }
+    header p { margin: 0 0 1.5rem; color: var(--muted); }
+    .chip {
+      display: inline-block;
+      padding: .1rem .5rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: .85em;
+      color: var(--muted);
+      text-transform: lowercase;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.2rem;
+      margin-bottom: 1.25rem;
+    }
+    .card h2 { margin: 0 0 .85rem; font-size: 1.05rem; }
+    form.row { display: flex; flex-wrap: wrap; gap: .5rem; }
+    input[type="text"] {
+      flex: 1 1 12rem;
+      min-width: 0;
+      padding: .55rem .7rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--ink);
+      font: inherit;
+    }
+    input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+    button {
+      padding: .55rem .9rem;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font: inherit;
+      cursor: pointer;
+    }
+    button:hover { filter: brightness(1.08); }
+    button.ghost {
+      background: transparent;
+      color: var(--ok);
+      border-color: var(--line);
+    }
+    button.danger {
+      background: transparent;
+      color: var(--danger);
+      border-color: var(--line);
+    }
+    .listhead { display: flex; align-items: baseline; justify-content: space-between; }
+    .listhead .count { color: var(--muted); font-size: .85rem; }
+    ul.items { list-style: none; margin: 0; padding: 0; }
+    ul.items li {
+      display: flex;
+      gap: .75rem;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: .7rem 0;
+      border-top: 1px solid var(--line);
+    }
+    ul.items li:first-child { border-top: 0; }
+    .meta { display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
+    .meta .title { font-weight: 600; word-break: break-word; }
+    .meta .desc { color: var(--muted); font-size: .92rem; word-break: break-word; }
+    .meta .stamp { color: var(--muted); font-size: .78rem; }
+    li.done .meta .title { color: var(--muted); text-decoration: line-through; }
+    .actions { display: flex; gap: .4rem; flex: 0 0 auto; }
+    .actions form { margin: 0; }
+    .empty { margin: 0; color: var(--muted); }
+    code {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: .05rem .3rem;
+      font-size: .88em;
+    }
+    footer {
+      margin-top: 1.5rem;
+      color: var(--muted);
+      font-size: .82rem;
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    footer a { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>{{PROJECT_NAME}}</h1>
+      <p>
+        A tiny FastAPI + SQLite MVP. Manage your
+        <span class="chip">{{PRIMARY_ENTITY}}</span> list below &mdash; plain HTML
+        forms, no JavaScript required.
+      </p>
+    </header>
+
+    <section class="card">
+      <h2>Add a new {{PRIMARY_ENTITY}}</h2>
+      <form class="row" method="post" action="/items">
+        <input
+          type="text"
+          name="title"
+          placeholder="Title"
+          maxlength="200"
+          required
+          autocomplete="off"
+        />
+        <input
+          type="text"
+          name="description"
+          placeholder="Description (optional)"
+          maxlength="2000"
+          autocomplete="off"
+        />
+        <button type="submit">Add</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="listhead">
+        <h2>All {{PRIMARY_ENTITY}}s</h2>
+        <span class="count">{{ total }} in total</span>
+      </div>
+
+      {% if items %}
+      <ul class="items">
+        {% for item in items %}
+        <li class="{% if item.done %}done{% endif %}">
+          <div class="meta">
+            <span class="title">{{ item.title }}</span>
+            {% if item.description %}
+            <span class="desc">{{ item.description }}</span>
+            {% endif %}
+            <span class="stamp">#{{ item.id }} &middot; {{ item.created_display }}</span>
+          </div>
+          <div class="actions">
+            <form method="post" action="/items/{{ item.id }}/toggle">
+              <button class="ghost" type="submit">
+                {% if item.done %}Reopen{% else %}Done{% endif %}
+              </button>
+            </form>
+            <form method="post" action="/items/{{ item.id }}/delete">
+              <button class="danger" type="submit">Delete</button>
+            </form>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="empty">
+        Nothing here yet. Add your first {{PRIMARY_ENTITY}} above, or load the
+        demo rows with <code>python -m app.seed</code>.
+      </p>
+      {% endif %}
+    </section>
+
+    <footer>
+      <span>{{PROJECT_NAME}} &middot; generated by MVP Creator &middot; {{GENERATED_AT}}</span>
+      <span><a href="/healthz">/healthz</a> &middot; <a href="/api/items">/api/items</a></span>
+    </footer>
+  </div>
+</body>
+</html>

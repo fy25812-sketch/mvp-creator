@@ -1,0 +1,38 @@
+# Build context hygiene — keep the image small and reproducible.
+.git
+.gitignore
+.github
+
+.venv
+venv
+env
+__pycache__
+**/__pycache__
+*.py[cod]
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.coverage
+
+# Local runtime state must never be baked into the image: it is a bind mount.
+data
+*.db
+*.sqlite3
+
+# Secrets and deploy state
+.env
+.deployed-tag
+.deployed-tag.prev
+
+# Tests, docs and host-side deploy assets are not needed at runtime.
+tests
+deploy
+Makefile
+*.md
+!README.md
+
+# Editors / OS
+.idea
+.vscode
+.DS_Store
+Thumbs.db

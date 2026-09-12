@@ -1,0 +1,13 @@
+# dsh-mvp-creator bundle layer.
+#
+# Installed as a bundle (`dsh plugin --profile web add ./mvp-creator`), the bare
+# package name resolves through the profile directory. During development the
+# same row can instead point at the source file by absolute path, which the
+# run-from-source launcher loads directly:
+#
+#   - id: mvp-creator
+#     name: 'D:/工作/Project/mvp-creator/src/index.js'
+#
+- insert:
+    - id: mvp-creator
+      name: dsh-mvp-creator

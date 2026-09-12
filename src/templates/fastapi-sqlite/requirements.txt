@@ -1,0 +1,21 @@
+# {{PROJECT_NAME}} — Python dependencies (rendered {{GENERATED_AT}})
+#
+# Runtime + test dependencies live in this single file so that a fresh clone can
+# run `pip install -r requirements.txt && pytest` with no extra steps.
+# pyproject.toml mirrors this list: [project.dependencies] == the RUNTIME block
+# below, [project.optional-dependencies].dev == the TEST block below.
+#
+# The project targets Python 3.12+ and needs no external services.
+
+# ---- runtime ---------------------------------------------------------------
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30,<1.0
+SQLAlchemy>=2.0,<2.1
+pydantic>=2.7,<3.0
+pydantic-settings>=2.3,<3.0
+Jinja2>=3.1,<4.0
+python-multipart>=0.0.9,<1.0
+
+# ---- test ------------------------------------------------------------------
+httpx>=0.27,<1.0
+pytest>=8.0,<9.0
